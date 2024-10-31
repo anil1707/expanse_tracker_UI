@@ -1,17 +1,19 @@
-import { View, Text, Image, TextInput, TouchableOpacity } from "react-native";
+import { View, Text, Image, TextInput, TouchableOpacity, KeyboardAvoidingView, Platform } from "react-native";
 import React, { useState } from "react";
 import BackButton from "../components/BackButton";
 import Inptut from "../components/Inptut";
 import { useNavigation } from "@react-navigation/native";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import baseUrl from "../utils/baseUrl";
 
 const Signin = () => {
   const navigation = useNavigation();
   const [formData, setFormData] = useState({
-    email: "",
+    number: "",
     password: "",
   });
+  const [errorMessage, setErrorMessage] = useState("")
   const handleOnChange = (value, name) => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
@@ -20,16 +22,16 @@ const Signin = () => {
       await AsyncStorage.setItem("userToken", token);
       console.log("Token saved successfully");
     } catch (error) {
+      setErrorMessage(error?.message)
       console.error("Error saving token:", error);
     }
   };
 
   const singIn = async () => {
     try {
-      const data = await axios.post("http://192.168.1.198:5000/api/v1/signin", {
+      const data = await axios.post(`${baseUrl}/api/v1/signin`, {
         ...formData,
       });
-      // console.log(data.data);
       return data?.data;
     } catch (error) {
       console.log("Erorr: ", error);
@@ -38,14 +40,24 @@ const Signin = () => {
   const handleSignin = async () => {
     const res = await singIn();
     console.log(res);
-    saveToken(res?.token);
     if (res?.message == "Login successfully") {
+      saveToken(res?.token);
       navigation.goBack();
       navigation.navigate("Home");
+    } else {
+      setErrorMessage(res?.message)
     }
   };
 
+  console.log(errorMessage);
   return (
+    <KeyboardAvoidingView
+    style={{ flex: 1 }}
+    behavior={Platform.OS === "ios" ? "padding" : "height"}
+    keyboardVerticalOffset={Platform.OS === "ios" ? 64 : 0}
+    enabled
+  >
+
     <View style={{ width: 350, height: 740 }}>
       <View
         style={{
@@ -73,16 +85,16 @@ const Signin = () => {
       </View>
       <View style={{ alignItems: "center", gap: 20 }}>
         <View style={{ gap: 5 }}>
-          <Text style={{ fontWeight: "bold" }}>Email</Text>
+          <Text style={{ fontWeight: "bold" }}>Number*</Text>
           <Inptut
-            placholder={"Email"}
-            onChange={(value) => handleOnChange(value, "email")}
-            value={FormData.email}
-            name={"email"}
+            placholder={"Number"}
+            onChange={(value) => handleOnChange(value, "number")}
+            value={FormData.number}
+            name={"number"}
           />
         </View>
         <View style={{ gap: 5 }}>
-          <Text style={{ fontWeight: "bold" }}>Password</Text>
+          <Text style={{ fontWeight: "bold" }}>Password*</Text>
           <Inptut
             placholder={"Password"}
             onChange={(value) => handleOnChange(value, "password")}
@@ -102,6 +114,7 @@ const Signin = () => {
             <Text>Forgot Password?</Text>
           </TouchableOpacity>
         </View>
+        {errorMessage &&<Text style={{color:"red"}}>{errorMessage}</Text>}
         <TouchableOpacity
           style={{
             backgroundColor: "green",
@@ -121,6 +134,7 @@ const Signin = () => {
         </TouchableOpacity>
       </View>
     </View>
+    </KeyboardAvoidingView>
   );
 };
 

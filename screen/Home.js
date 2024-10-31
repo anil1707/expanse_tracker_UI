@@ -5,6 +5,7 @@ import {
   Image,
   FlatList,
   StyleSheet,
+  ActivityIndicator,
 } from "react-native";
 import React, { useCallback, useEffect, useState } from "react";
 import randomImage from "../assets/randoImage";
@@ -12,10 +13,16 @@ import EmptyComponent from "../components/EmptyComponent";
 import { useNavigation } from "@react-navigation/native";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useFocusEffect } from '@react-navigation/native';
+import { useFocusEffect } from "@react-navigation/native";
+import baseUrl from "../utils/baseUrl";
+import { useDispatch, useSelector } from "react-redux";
+import { addProfile } from "../redux/slices/authSlice";
 
 const Home = () => {
+  const dispatch = useDispatch();
+  const userData = useSelector((state) => state.profile);
   const [allTrip, setAllTrip] = useState([]);
+  const [loader, setLoader] = useState(false);
   const getToken = async () => {
     try {
       const token = await AsyncStorage.getItem("userToken");
@@ -27,24 +34,44 @@ const Home = () => {
     }
     return null;
   };
-  const getAllTrips = async () => {
+
+  const getUserProfile = async () => {
     try {
-      const response = await axios.get(
-        "http://192.168.1.198:5000/api/v1/all-trip",
-        {
-          headers: {
-            authorization: "Bearer " + (await getToken()),
-          },
-        }
+      const response = await axios.get(baseUrl + "/api/v1/profile", {
+        headers: {
+          authorization: "Bearer " + (await getToken()),
+        },
+      });
+      dispatch(
+        addProfile({
+          name: response?.data.userDetail?.name,
+          number: response?.data.userDetail?.number,
+        })
       );
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const getAllTrips = async () => {
+    setLoader(true);
+    try {
+      const response = await axios.get(baseUrl + "/api/v1/all-trip", {
+        headers: {
+          authorization: "Bearer " + (await getToken()),
+        },
+      });
       setAllTrip(response?.data);
     } catch (error) {
       console.log(error);
+    } finally {
+      setLoader(false);
     }
   };
   useFocusEffect(
     useCallback(() => {
       getAllTrips();
+      getUserProfile();
     }, [])
   );
   const navigation = useNavigation();
@@ -80,20 +107,26 @@ const Home = () => {
     );
   };
 
-  const handleLogout = async () =>{
+  const handleLogout = async () => {
     try {
-      await AsyncStorage.removeItem('userToken');
+      console.log("befor logout: ", AsyncStorage.getItem("userToken"));
+      await AsyncStorage.removeItem("userToken");
+      console.log("after logout: ", AsyncStorage.getItem("userToken"));
+      navigation.navigate("Welcome");
     } catch (error) {
-      console.error('Failed to remove userToken:', error);
+      console.error("Failed to remove userToken:", JSON.stringify(error));
     }
-  }
+  };
 
   return (
     <View style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.headerText}>Expensify</Text>
         <TouchableOpacity style={styles.logoutButton}>
-          <Text style={styles.logoutText} onPress={handleLogout}>Logout</Text>
+          <Text>{userData?.name}</Text>
+          <Text style={styles.logoutText} onPress={handleLogout}>
+            Logout
+          </Text>
         </TouchableOpacity>
       </View>
       <View style={styles.imageContainer}>
@@ -111,19 +144,22 @@ const Home = () => {
         </TouchableOpacity>
       </View>
       <View style={styles.listContainer}>
-        <FlatList
-          data={allTrip}
-          showsVerticalScrollIndicator={false}
-          numColumns={2}
-          columnWrapperStyle={styles.columnWrapper}
-          keyExtractor={(item) => item._id}
-          renderItem={renderItem}
-          ItemSeparatorComponent={<View style={{ padding: 5 }}></View>}
-          ListFooterComponent={renderFooter}
-          ListEmptyComponent={
-            <EmptyComponent message={"You havn't recorded any trip yet"} />
-          }
-        />
+        {loader && <ActivityIndicator size="large" />}
+        {!loader && (
+          <FlatList
+            data={allTrip}
+            showsVerticalScrollIndicator={false}
+            numColumns={2}
+            columnWrapperStyle={styles.columnWrapper}
+            keyExtractor={(item) => item._id}
+            renderItem={renderItem}
+            ItemSeparatorComponent={<View style={{ padding: 5 }}></View>}
+            ListFooterComponent={renderFooter}
+            ListEmptyComponent={
+              <EmptyComponent message={"You havn't recorded any trip yet"} />
+            }
+          />
+        )}
       </View>
     </View>
   );
