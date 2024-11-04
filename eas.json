@@ -1,0 +1,17 @@
+{
+  "cli": {
+    "version": ">= 0.47.0"
+  },
+  "build": {
+    "production": {
+      "android": {
+        "buildType": "apk",
+        "gradleCommand": ":app:assembleRelease",
+        "env": {
+          "API_URL": "https://api.yourproductionurl.com"
+        },
+        "releaseChannel": "production"
+      }
+    }
+  }
+}

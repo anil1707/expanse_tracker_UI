@@ -54,7 +54,7 @@ const AddExpense = (props) => {
         }
       );
       if (response.data.message === "Expense Added Successfully!") {
-        navigation.navigate("Expense", { _id: id });
+        navigation.navigate("Expense", { id: id });
       }
     } catch (err) {
       console.log(err);

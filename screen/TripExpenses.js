@@ -12,7 +12,6 @@ import EmptyComponent from "../components/EmptyComponent";
 import BackButton from "../components/BackButton";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import axios from "axios";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import SeeFriend from "../components/SeeFriend";
 import baseUrl from "../utils/baseUrl";
 import { Overlay } from "react-native-elements";
@@ -21,21 +20,13 @@ import formatDate from "../utils/formatDate";
 import useContactByNumber from "../utils/getContanstDetail";
 import { useDispatch, useSelector } from "react-redux";
 import { addContacts, clearContacts } from "../redux/slices/userSlice";
-const getToken = async () => {
-  try {
-    const token = await AsyncStorage.getItem("userToken");
-    if (token !== null) {
-      return token;
-    }
-  } catch (error) {
-    console.error("Error retrieving token:", error);
-  }
-  return null;
-};
+import Settle from "../components/Settle";
+import PaymentHistory from "../components/PaymentHistory";
+import getToken from "../utils/getToken";
 const TripExpenses = (props) => {
   const dispatch = useDispatch();
   const friends = useSelector((state) => state.contactDetail);
-  const id = props.route.params._id;
+  const id = props.route.params.id;
   const navigation = useNavigation();
   const [expense, setExpense] = useState({});
   const [loader, setLoader] = useState(false);
@@ -45,6 +36,7 @@ const TripExpenses = (props) => {
   const [modalData, setModalData] = useState();
   const [indivudualGroupExpanse, setIndividualGrouExpanse] = useState({});
   const [groupMembers, setGroupMember] = useState([]);
+  const [showPaymentHistory, setShowPaymentHistory] = useState(false);
   const getExpense = async () => {
     setLoader(true);
     try {
@@ -56,7 +48,7 @@ const TripExpenses = (props) => {
       setExpense(response?.data);
       setGroupMember(response?.data?.friends);
     } catch (err) {
-      console.log(err);
+      console.log("Error: ", err);
     } finally {
       setLoader(false);
     }
@@ -79,23 +71,20 @@ const TripExpenses = (props) => {
         },
       }
     );
-    setIndividualGrouExpanse(response.data);
+    setIndividualGrouExpanse(response?.data);
   };
   const getGroupMemberDetails = async () => {
     for (let i = 0; i < expense?.friends?.length; i++) {
       const phoneNumber = expense?.friends[i]?.number;
       let result = await useContactByNumber(phoneNumber);
       if (!result?.error && result?.contactName) {
-        if(result?.number === profile?.number){
-          dispatch(
-            addContacts({ phoneNumber: phoneNumber, name: "You" })
-          );
-        } else{
+        if (result?.number === profile?.number) {
+          dispatch(addContacts({ phoneNumber: phoneNumber, name: "You" }));
+        } else {
           dispatch(
             addContacts({ phoneNumber: phoneNumber, name: result?.contactName })
           );
         }
-        
       }
     }
   };
@@ -106,7 +95,7 @@ const TripExpenses = (props) => {
       getGroupExpanse();
       getGroupMemberDetails();
       dispatch(clearContacts());
-    }, [])
+    }, [id])
   );
 
   useEffect(() => {
@@ -134,7 +123,7 @@ const TripExpenses = (props) => {
           flexDirection: "row",
           justifyContent: "space-between",
           backgroundColor:
-            profile?.number == item.spendBy.number ? "#e7f7e4" : "#f5ebec",
+            profile?.number == item?.spendBy?.number ? "#e7f7e4" : "#f5ebec",
           padding: 10,
           elevation: 1,
         }}
@@ -142,17 +131,17 @@ const TripExpenses = (props) => {
         <View>
           <View>
             <Text style={{ fontWeight: "bold", fontSize: 15 }}>
-              {item.title}{" "}
+              {item?.title}
             </Text>
             <View style={{ flexDirection: "row" }}>
               <Text style={{ fontSize: 12 }}>
-                {item.spendBy?.number === profile?.number
+                {item?.spendBy?.number === profile?.number
                   ? "You paid: "
-                  : item.spendBy?.name + " paid: "}
+                  : item?.spendBy?.name + " paid: "}
               </Text>
               <Text style={{ fontSize: 12, fontWeight: "bold" }}>Rs.</Text>
               <Text style={{ fontSize: 12, fontWeight: "bold" }}>
-                {item.amount}
+                {item?.amount}
               </Text>
             </View>
           </View>
@@ -160,7 +149,7 @@ const TripExpenses = (props) => {
         <View>
           <View style={{ alignItems: "flex-end" }}>
             <Text style={{ fontSize: 12 }}>
-              {profile?.number == item.spendBy.number
+              {profile?.number == item?.spendBy?.number
                 ? "You lent"
                 : youInvolved !== undefined
                 ? "You borrow"
@@ -205,40 +194,54 @@ const TripExpenses = (props) => {
           />
         </View>
         <Text style={{ fontSize: 20, fontWeight: "semibold" }}>
-          {expense.name}
+          {expense?.name}
         </Text>
       </View>
       <View style={styles.imageContainer}>
-        {expense &&
-          Object.keys(indivudualGroupExpanse) &&
-          Object.keys(indivudualGroupExpanse).map((friend, index) => {
-            const user = friends?.find((user) => user?.phoneNumber == friend);
-            return (
-              <Text
-                key={index}
-                style={{
-                  color:
-                    indivudualGroupExpanse[
+        {!loader && (
+          <View>
+            {expense &&
+              !loader &&
+              Object.keys(indivudualGroupExpanse) &&
+              Object.keys(indivudualGroupExpanse).map((friend, index) => {
+                const user = friends?.find(
+                  (user) => user?.phoneNumber == friend
+                );
+                return (
+                  <Text
+                    key={index}
+                    style={{
+                      color:
+                        indivudualGroupExpanse[
+                          Object.keys(indivudualGroupExpanse)[index]
+                        ] < 0
+                          ? "red"
+                          : "green",
+                    }}
+                  >
+                    {user?.name} :{" "}
+                    {indivudualGroupExpanse[
                       Object.keys(indivudualGroupExpanse)[index]
                     ] < 0
-                      ? "red"
-                      : "green",
-                }}
-              >
-                {user?.name} :{" "}
-                {indivudualGroupExpanse[
-                  Object.keys(indivudualGroupExpanse)[index]
-                ] < 0
-                  ? indivudualGroupExpanse[
-                      Object.keys(indivudualGroupExpanse)[index]
-                    ]
-                  : indivudualGroupExpanse[
-                      Object.keys(indivudualGroupExpanse)[index]
-                    ]}
-              </Text>
-            );
-          })}
+                      ? indivudualGroupExpanse[
+                          Object.keys(indivudualGroupExpanse)[index]
+                        ] * -1
+                      : indivudualGroupExpanse[
+                          Object.keys(indivudualGroupExpanse)[index]
+                        ]}
+                  </Text>
+                );
+              })}
+            <Settle
+              tripId={id}
+              setShowPaymentHistory={setShowPaymentHistory}
+              showPaymentHistory={showPaymentHistory}
+            />
+          </View>
+        )}
+        {loader && <ActivityIndicator size={"large"} />}
       </View>
+
       <View style={styles.recentTripsContainer}>
         <View>
           <Text style={styles.recentTripsText}>Expenses</Text>
@@ -252,7 +255,7 @@ const TripExpenses = (props) => {
           style={styles.addTripButton}
           onPress={() =>
             naviagtion.navigate("AddExpanse", {
-              id: props.route.params._id,
+              id: id,
               friends: expense.friends,
             })
           }
@@ -271,7 +274,7 @@ const TripExpenses = (props) => {
         {loader && <ActivityIndicator size={"large"} />}
         {!loader && (
           <FlatList
-            data={expense.expenseDoc}
+            data={expense?.expenseDoc}
             showsVerticalScrollIndicator={false}
             keyExtractor={(item) => item._id}
             renderItem={renderItem}
@@ -325,10 +328,10 @@ const TripExpenses = (props) => {
             <View style={{ marginLeft: 10 }}>
               {modalData &&
                 modalData?.splitInto &&
-                modalData.splitInto.map((item) => {
+                modalData?.splitInto.map((item) => {
                   const user = friends.find(
-                    (friend) => friend.phoneNumber === item?.number
-                  )
+                    (friend) => friend?.phoneNumber === item?.number
+                  );
                   return (
                     <View
                       key={item?._id}
@@ -347,6 +350,12 @@ const TripExpenses = (props) => {
             </View>
           </View>
         </Overlay>
+      )}
+      {showPaymentHistory && (
+        <PaymentHistory
+          setShowPaymentHistory={setShowPaymentHistory}
+          tripId={id}
+        />
       )}
     </View>
   );
@@ -381,10 +390,13 @@ const styles = StyleSheet.create({
   },
   imageContainer: {
     justifyContent: "center",
-    // alignItems: "center",
+    alignItems: "center",
+    backgroundColor: "white",
     marginVertical: 20,
-    width: 300,
     height: 200,
+    borderWidth: 0.5,
+    borderRadius: 10,
+    elevation: 3,
   },
   image: {},
   recentTripsContainer: {
@@ -404,7 +416,7 @@ const styles = StyleSheet.create({
     paddingVertical: 5,
     borderRadius: 20,
     backgroundColor: "white",
-    elevation: 1,
+    elevation: 5,
   },
   addTripText: {
     fontWeight: "bold",
