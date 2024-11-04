@@ -8,6 +8,8 @@ import AddExpense from "../screen/AddExpense";
 import TripExpenses from "../screen/TripExpenses";
 import Signin from "../screen/Signin";
 import Signup from "../screen/Signup";
+import Settle from "./Settle";
+import SettleWith from "./SettleWith";
 
 const Stack = createStackNavigator();
 
@@ -25,6 +27,7 @@ const AppNavigation = ({token}) => {
           <Stack.Screen name="AddExpanse" component={AddExpense} />
           <Stack.Screen name="Expense" component={TripExpenses} />
           <Stack.Screen name="Welcome" component={Welcome} />
+          <Stack.Screen name="settleWith" component={SettleWith} />
           <Stack.Screen
             name="Signin"
             options={{ presentation: "modal" }}

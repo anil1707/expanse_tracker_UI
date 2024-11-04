@@ -7,6 +7,7 @@ const Inptut = ({ placholder, onChange, value, name, secureTextEntry }) => {
       <TextInput
         style={[
           {
+            borderWidth:1,
             backgroundColor: "white",
             width: 300,
             borderRadius: 15,

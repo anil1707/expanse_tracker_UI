@@ -6,8 +6,9 @@ import {
   FlatList,
   StyleSheet,
   ActivityIndicator,
+  Button,
 } from "react-native";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useState } from "react";
 import randomImage from "../assets/randoImage";
 import EmptyComponent from "../components/EmptyComponent";
 import { useNavigation } from "@react-navigation/native";
@@ -17,24 +18,17 @@ import { useFocusEffect } from "@react-navigation/native";
 import baseUrl from "../utils/baseUrl";
 import { useDispatch, useSelector } from "react-redux";
 import { addProfile } from "../redux/slices/authSlice";
+import getToken from "../utils/getToken";
+import EvilIcons from "@expo/vector-icons/EvilIcons";
+import FontAwesome from "@expo/vector-icons/FontAwesome";
+import { Divider, Overlay } from "react-native-elements";
 
 const Home = () => {
   const dispatch = useDispatch();
   const userData = useSelector((state) => state.profile);
   const [allTrip, setAllTrip] = useState([]);
+  const [clickProfile, setClickProfile] = useState(false);
   const [loader, setLoader] = useState(false);
-  const getToken = async () => {
-    try {
-      const token = await AsyncStorage.getItem("userToken");
-      if (token !== null) {
-        return token;
-      }
-    } catch (error) {
-      console.error("Error retrieving token:", error);
-    }
-    return null;
-  };
-
   const getUserProfile = async () => {
     try {
       const response = await axios.get(baseUrl + "/api/v1/profile", {
@@ -86,7 +80,7 @@ const Home = () => {
           alignItems: "center",
           borderRadius: 15,
         }}
-        onPress={() => navigation.navigate("Expense", item)}
+        onPress={() => navigation.navigate("Expense", { id: item._id })}
       >
         <View>
           <Image source={randomImage()} style={{ width: 80, height: 80 }} />
@@ -109,9 +103,7 @@ const Home = () => {
 
   const handleLogout = async () => {
     try {
-      console.log("befor logout: ", AsyncStorage.getItem("userToken"));
       await AsyncStorage.removeItem("userToken");
-      console.log("after logout: ", AsyncStorage.getItem("userToken"));
       navigation.navigate("Welcome");
     } catch (error) {
       console.error("Failed to remove userToken:", JSON.stringify(error));
@@ -119,14 +111,32 @@ const Home = () => {
   };
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { position: "relative" }]}>
       <View style={styles.header}>
         <Text style={styles.headerText}>Expensify</Text>
-        <TouchableOpacity style={styles.logoutButton}>
+        <TouchableOpacity
+          style={[
+            styles.logoutButton,
+            {
+              flexDirection: "row",
+              justifyContent: "center",
+              alignItems: "center",
+              borderWidth: 1.5,
+              paddingHorizontal: 10,
+              paddingVertical: 5,
+              borderRadius: 20,
+              backgroundColor: "white",
+              elevation: 1,
+              gap: 5,
+            },
+          ]}
+          onPress={() => setClickProfile(!clickProfile)}
+        >
+          <FontAwesome name="user-circle" size={20} color="gray" />
           <Text>{userData?.name}</Text>
-          <Text style={styles.logoutText} onPress={handleLogout}>
+          {/* <Text style={styles.logoutText} onPress={handleLogout}>
             Logout
-          </Text>
+          </Text> */}
         </TouchableOpacity>
       </View>
       <View style={styles.imageContainer}>
@@ -161,7 +171,48 @@ const Home = () => {
           />
         )}
       </View>
+      {clickProfile && (
+        <ProfileModal
+          clickProfile={clickProfile}
+          setClickProfile={setClickProfile}
+          handleLogout={handleLogout}
+        />
+      )}
     </View>
+  );
+};
+
+const ProfileModal = ({ clickProfile, setClickProfile, handleLogout }) => {
+  return (
+    <Overlay
+      isVisible={clickProfile}
+      onBackdropPress={() => setClickProfile(!clickProfile)}
+      backdropStyle={{
+        width: "100%",
+        height: "100%",
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+        backgroundColor: "transparent",
+        marginTop: 10,
+      }}
+      overlayStyle={{
+        position: "absolute",
+        top: 55,
+        right: 30,
+        width: 100,
+        padding: 10,
+        alignItems: "center",
+      }}
+    >
+      <TouchableOpacity>
+        <Text>Profile</Text>
+      </TouchableOpacity>
+      <Divider style={{ width: "100%", height: 1, marginVertical: 5 }} />
+      <TouchableOpacity onPress={handleLogout}>
+        <Text>Logout</Text>
+      </TouchableOpacity>
+    </Overlay>
   );
 };
 
@@ -180,14 +231,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     fontSize: 30,
   },
-  logoutButton: {
-    borderWidth: 1.5,
-    paddingHorizontal: 10,
-    paddingVertical: 5,
-    borderRadius: 20,
-    backgroundColor: "white",
-    elevation: 1,
-  },
+  logoutButton: {},
   logoutText: {
     fontWeight: "600",
     fontSize: 15,
