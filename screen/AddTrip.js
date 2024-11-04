@@ -16,6 +16,8 @@ import * as Contacts from "expo-contacts";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import { ScrollView } from "react-native-gesture-handler";
 import baseUrl from "../utils/baseUrl";
+import CustomButton from "../components/common/CustomButton";
+import Feather from "@expo/vector-icons/Feather";
 const getToken = async () => {
   try {
     const token = await AsyncStorage.getItem("userToken");
@@ -30,6 +32,7 @@ const getToken = async () => {
 
 const AddTrip = () => {
   const navigation = useNavigation();
+  const [errorMessage, setErrorMessage] = useState("");
   const [formData, setFormData] = useState({
     place: "",
     country: "",
@@ -51,9 +54,10 @@ const AddTrip = () => {
           },
         }
       );
-      console.log(response.data);
       if (response.data.message === "Trip Added Successfully!") {
         navigation.navigate("Home");
+      } else {
+        setErrorMessage(response.data?.message);
       }
     } catch (err) {
       console.log("Failed to add new trip: ", err);
@@ -103,10 +107,9 @@ const AddTrip = () => {
     }));
   };
 
-  console.log(formData);
   return (
     <SafeAreaView
-      style={{ flex: 1, paddingHorizontal: 20, marginVertical: 10 }}
+      style={{ flex: 1, paddingHorizontal: 24, marginVertical: 10 }}
     >
       <View
         style={{
@@ -132,6 +135,7 @@ const AddTrip = () => {
           style={{ width: 200, height: 200 }}
         />
       </View>
+      {errorMessage && <Text style={{ color: "red" }}>{errorMessage}</Text>}
       <View style={{ flex: 1 }}>
         <View style={{ gap: 5 }}>
           <Text style={{ fontWeight: "bold" }}>Where on earth?</Text>
@@ -151,33 +155,42 @@ const AddTrip = () => {
             name={"country"}
           />
         </View>
-        <TouchableOpacity
-          onPress={handleAddFriends}
+        <View
           style={{
-            backgroundColor: "lightgreen",
-            width: "85%",
-            padding: 10,
-            borderRadius: 15,
+            gap: 5,
+            flexDirection: "row",
             alignItems: "center",
-            marginTop: 20,
-            alignSelf: "center",
+            justifyContent: "space-between",
+            marginTop: 10,
           }}
         >
-          <Text>Add Friends</Text>
-        </TouchableOpacity>
+          <Text style={{ fontSize: 18, fontWeight: "semibold" }}>
+            Add Friend
+          </Text>
+          <View
+            style={{ backgroundColor: "green", padding: 7, borderRadius: 50 }}
+          >
+            <Feather
+              name="plus"
+              size={24}
+              color="white"
+              onPress={handleAddFriends}
+            />
+          </View>
+        </View>
         <ScrollView style={{ marginTop: 20 }}>
           {formData?.friends?.length != 0 &&
             formData?.friends.map((friend, index) => {
               return (
                 <View
                   style={{
-                    backgroundColor: "lightblue",
+                    backgroundColor: "lightgray",
                     padding: 10,
                     borderRadius: 8,
-                    width: "90%",
+                    width: "100%",
                     flexDirection: "row",
                     justifyContent: "space-between",
-                    alignSelf: "center",
+                    alignItems: "center",
                     marginBottom: 10,
                   }}
                   key={index}
@@ -198,24 +211,12 @@ const AddTrip = () => {
               );
             })}
         </ScrollView>
-        <TouchableOpacity
-          style={{
-            backgroundColor: "green",
-            width: "85%",
-            padding: 10,
-            borderRadius: 15,
-            alignItems: "center",
-            marginTop: 20,
-            alignSelf: "center",
-          }}
+        <CustomButton
+          title={"Add Trip"}
           onPress={handleAddTrip}
-        >
-          <Text
-            style={{ fontWeight: "semibold", fontSize: 15, color: "white" }}
-          >
-            Add Trip
-          </Text>
-        </TouchableOpacity>
+          titleStyle={{ fontSize: 18, color: "white" }}
+          style={{ marginBottom: 30 }}
+        />
       </View>
     </SafeAreaView>
   );

@@ -13,9 +13,12 @@ import Inptut from "../components/Inptut";
 import { useNavigation } from "@react-navigation/native";
 import axios from "axios";
 import baseUrl from "../utils/baseUrl";
+import CustomButton from "../components/common/CustomButton";
+import IconInput from "../components/common/IconInput";
 
 const Signup = () => {
   const navigation = useNavigation();
+  const [hidePassword, setHidePassword] = useState(true);
   const [formData, setFormData] = useState({
     username: "",
     number: "",
@@ -45,26 +48,26 @@ const Signup = () => {
     <KeyboardAvoidingView
       style={{ flex: 1 }}
       behavior={Platform.OS === "ios" ? "padding" : "height"}
-      keyboardVerticalOffset={Platform.OS === "ios" ? 100 : 0} // Adjust this if needed
+      keyboardVerticalOffset={Platform.OS === "ios" ? 50 : 0} // Adjust this if needed
     >
       <ScrollView
         contentContainerStyle={{ flexGrow: 1 }}
         keyboardShouldPersistTaps="handled"
       >
-        <View style={{ flex: 1, padding: 20 }}>
+        <View style={{ flex: 1, paddingHorizontal: 24, paddingVertical: 20 }}>
           <View
             style={{
-              flex: 1,
               flexDirection: "row",
               alignItems: "center",
               justifyContent: "center",
-              marginBottom: 20,
             }}
           >
             <View style={{ position: "absolute", top: 0, left: 10 }}>
               <BackButton onPress={() => navigation.navigate("Welcome")} />
             </View>
-            <Text style={{ fontSize: 20, fontWeight: "600" }}>Sign in</Text>
+            <Text style={{ fontSize: 20, fontWeight: "semibold" }}>
+              Sign Up
+            </Text>
           </View>
           <View
             style={{
@@ -82,7 +85,7 @@ const Signup = () => {
             <View style={{ gap: 5, width: "100%" }}>
               <Text style={{ fontWeight: "bold" }}>Name*</Text>
               <Inptut
-                placholder={"username"}
+                placholder={"User Name"}
                 onChange={(value) => handleOnChange(value, "username")}
                 value={formData.username}
                 name={"username"}
@@ -99,39 +102,34 @@ const Signup = () => {
             </View>
             <View style={{ gap: 5, width: "100%" }}>
               <Text style={{ fontWeight: "bold" }}>Password*</Text>
-              <Inptut
+              <IconInput
                 placholder={"Password"}
                 onChange={(value) => handleOnChange(value, "password")}
                 value={formData.password}
                 name={"password"}
-                secureTextEntry={true}
+                secureTextEntry={hidePassword}
+                iconRight={true}
+                iconName={hidePassword ? "eye-off-outline" : "eye-outline"}
+                iconPress={() => setHidePassword(!hidePassword)}
               />
             </View>
-            <View
-              style={{
-                flexDirection: "row",
-                justifyContent: "flex-end",
-                width: "85%",
-              }}
-            >
-              <TouchableOpacity>
-                <Text>Forgot Password?</Text>
-              </TouchableOpacity>
-            </View>
-            <TouchableOpacity
-              style={{
-                backgroundColor: "green",
-                width: "85%",
-                padding: 10,
-                borderRadius: 15,
-                alignItems: "center",
-                marginTop: 20,
-              }}
+            <CustomButton
               onPress={handleSignup}
-            >
-              <Text style={{ fontWeight: "600", fontSize: 15, color: "white" }}>
-                Sign Up
-              </Text>
+              title={"Sign Up"}
+              style={{ marginTop: 20 }}
+              titleStyle={{ fontSize: 15, color: "white" }}
+            />
+          </View>
+          <View
+            style={{
+              justifyContent: "center",
+              marginTop: 20,
+              flexDirection: "row",
+            }}
+          >
+            <Text>Already have an account? </Text>
+            <TouchableOpacity onPress={() => navigation.navigate("Signin")}>
+              <Text style={{ color: "green" }}>Sign In</Text>
             </TouchableOpacity>
           </View>
         </View>
