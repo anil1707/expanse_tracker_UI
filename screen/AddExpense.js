@@ -8,6 +8,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import Checkbox from "expo-checkbox";
 import baseUrl from "../utils/baseUrl";
 import { useSelector } from "react-redux";
+import CustomButton from "../components/common/CustomButton";
 
 const getToken = async () => {
   try {
@@ -81,7 +82,7 @@ const AddExpense = (props) => {
   };
 
   return (
-    <View style={{ width: 350, height: 740 }}>
+    <View style={{ width: 350, height: 740, paddingHorizontal: 24 }}>
       <View
         style={{
           flexDirection: "row",
@@ -91,15 +92,22 @@ const AddExpense = (props) => {
       >
         <View style={{ position: "absolute", top: 0, left: 10 }}>
           <BackButton
-            onPress={() => navigation.navigate("Expense", { _id: id })}
+            onPress={() => navigation.navigate("Expense", { id: id })}
           />
         </View>
         <Text style={{ fontSize: 20, fontWeight: "semibold" }}>
           Add Expense
         </Text>
       </View>
-      <View style={{ alignItems: "center", gap: 20, marginVertical: 40 }}>
-        <View style={{ gap: 5 }}>
+      <View
+        style={{
+          alignItems: "center",
+          gap: 10,
+          marginVertical: 40,
+          width: "100%",
+        }}
+      >
+        <View style={{ gap: 5, width: "100%" }}>
           <Text style={{ fontWeight: "bold" }}>For What?</Text>
           <Inptut
             placeholder={"Title"}
@@ -108,7 +116,7 @@ const AddExpense = (props) => {
             name={"title"}
           />
         </View>
-        <View style={{ gap: 5 }}>
+        <View style={{ gap: 5, width: "100%" }}>
           <Text style={{ fontWeight: "bold" }}>How Much?</Text>
           <Inptut
             placeholder={"Amount"}
@@ -118,18 +126,17 @@ const AddExpense = (props) => {
           />
         </View>
 
-        <View>
+        <View style={{ width: "100%" }}>
           <View
             style={{
               flexDirection: "row",
-              gap: 150,
-              backgroundColor: "lightgray",
-              padding: 5,
+              justifyContent: "space-between",
+              paddingVertical: 10,
+              borderRadius:10
             }}
           >
             <TouchableOpacity
               style={{
-                marginLeft: 8,
                 fontWeight: "bold",
                 backgroundColor:
                   activeTab === "equally" ? "lightgreen" : "white",
@@ -149,7 +156,6 @@ const AddExpense = (props) => {
                 borderRadius: 10,
                 paddingVertical: 5,
                 paddingHorizontal: 15,
-                marginRight: 8,
               }}
               onPress={() => handleActiveTab("unequally")}
             >
@@ -158,7 +164,7 @@ const AddExpense = (props) => {
           </View>
 
           {/* Friends list with checkboxes */}
-          <View>
+          <View style={{ width: "100%", justifyContent: "center"}}>
             {selectedFriends.length &&
               selectedFriends.map((friend) => {
                 const user = frientList.find((f) => {
@@ -174,6 +180,8 @@ const AddExpense = (props) => {
                       marginTop: 5,
                       backgroundColor: "lightblue",
                       padding: 10,
+                      width: "100%",
+                      borderRadius:10 
                     }}
                   >
                     <Text>{user?.name}</Text>
@@ -186,24 +194,11 @@ const AddExpense = (props) => {
               })}
           </View>
         </View>
-
-        <TouchableOpacity
-          style={{
-            backgroundColor: "green",
-            width: "85%",
-            padding: 10,
-            borderRadius: 15,
-            alignItems: "center",
-            marginTop: 20,
-          }}
+        <CustomButton
+          title={"Add Expense"}
           onPress={handleAddExpanse}
-        >
-          <Text
-            style={{ fontWeight: "semibold", fontSize: 15, color: "white" }}
-          >
-            Add Expense
-          </Text>
-        </TouchableOpacity>
+          titleStyle={{ fontSize: 18, color: "white" }}
+        />
       </View>
     </View>
   );
