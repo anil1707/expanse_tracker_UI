@@ -17,7 +17,6 @@ import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import baseUrl from "../utils/baseUrl";
 import CustomButton from "../components/common/CustomButton";
-import { color } from "react-native-elements/dist/helpers";
 import IconInput from "../components/common/IconInput";
 
 const Signin = () => {
@@ -28,6 +27,7 @@ const Signin = () => {
     password: "",
   });
   const [errorMessage, setErrorMessage] = useState("");
+  const [loading, setLoading] = useState(false);
   const handleOnChange = (value, name) => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
@@ -42,6 +42,7 @@ const Signin = () => {
   };
 
   const singIn = async () => {
+    setLoading(true);
     try {
       const data = await axios.post(`${baseUrl}/api/v1/signin`, {
         ...formData,
@@ -49,6 +50,8 @@ const Signin = () => {
       return data?.data;
     } catch (error) {
       console.log("Erorr: ", error);
+    } finally {
+      setLoading(false);
     }
   };
   const handleSignin = async () => {
@@ -63,7 +66,7 @@ const Signin = () => {
     }
   };
 
-  // console.log(errorMessage);
+  console.log("errorMessage", !formData.number || !formData.password);
   return (
     <KeyboardAvoidingView
       style={{ flex: 1 }}
@@ -146,6 +149,8 @@ const Signin = () => {
               title={"Sign In"}
               style={{ marginTop: 20 }}
               titleStyle={{ fontSize: 15, color: "white" }}
+              disabled={!formData.number || !formData.password}
+              loading={loading}
             />
           </View>
           <View style={{ marginTop: 20, flexDirection: "row", justifyContent:"center" }}>

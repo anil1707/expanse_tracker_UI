@@ -8,7 +8,6 @@ import AddExpense from "../screen/AddExpense";
 import TripExpenses from "../screen/TripExpenses";
 import Signin from "../screen/Signin";
 import Signup from "../screen/Signup";
-import Settle from "./Settle";
 import SettleWith from "./SettleWith";
 
 const Stack = createStackNavigator();

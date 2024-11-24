@@ -25,23 +25,33 @@ const Signup = () => {
     password: "",
   });
 
+  const [errorMessage, setErrorMessage] = useState("");
+  const [loading, setLoading] = useState(false);
+
   const handleOnChange = (value, name) => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const signup = async () => {
+    setLoading(true);
     try {
       const data = await axios.post(`${baseUrl}/api/v1/signup`, formData);
-      console.log(data.data);
+      if(data?.data?.success === true) {
+        console.log("data: ", data.data);
+        navigation.navigate("Signin");
+      } else {
+        console.log("Error: ", data?.data?.message);
+        setErrorMessage(data?.data?.message);
+      }
     } catch (error) {
       console.log("Error: ", error);
+    } finally{
+      setLoading(false);
     }
   };
 
   const handleSignup = () => {
     signup();
-    navigation.goBack();
-    navigation.navigate("Signin");
   };
 
   return (
@@ -81,6 +91,11 @@ const Signup = () => {
               style={{ width: 200, height: 200 }}
             />
           </View>
+          {errorMessage && (
+              <Text style={{ color: "red", marginBottom: 10 }}>
+                {errorMessage}
+              </Text>
+            )}
           <View style={{ alignItems: "center", gap: 20 }}>
             <View style={{ gap: 5, width: "100%" }}>
               <Text style={{ fontWeight: "bold" }}>Name*</Text>
@@ -98,6 +113,7 @@ const Signup = () => {
                 onChange={(value) => handleOnChange(value, "number")}
                 value={formData.number}
                 name={"number"}
+                keyboardType="phone-pad"
               />
             </View>
             <View style={{ gap: 5, width: "100%" }}>
@@ -118,6 +134,12 @@ const Signup = () => {
               title={"Sign Up"}
               style={{ marginTop: 20 }}
               titleStyle={{ fontSize: 15, color: "white" }}
+              disabled={
+                formData.username === "" ||
+                formData.number === "" ||
+                formData.password === ""
+              }
+              loading={loading}
             />
           </View>
           <View

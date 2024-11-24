@@ -19,9 +19,9 @@ import baseUrl from "../utils/baseUrl";
 import { useDispatch, useSelector } from "react-redux";
 import { addProfile } from "../redux/slices/authSlice";
 import getToken from "../utils/getToken";
-import EvilIcons from "@expo/vector-icons/EvilIcons";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { Divider, Overlay } from "react-native-elements";
+import showToast from "../components/showToast";
 
 const Home = () => {
   const dispatch = useDispatch();
@@ -152,6 +152,9 @@ const Home = () => {
         >
           <Text style={styles.addTripText}>Add Trip</Text>
         </TouchableOpacity>
+        {/* <TouchableOpacity onPress={() => showToast("toast message")}>
+          <Text>show Toast</Text>
+        </TouchableOpacity> */}
       </View>
       <View style={styles.listContainer}>
         {loader && <ActivityIndicator size="large" />}

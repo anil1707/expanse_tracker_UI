@@ -6,28 +6,37 @@ import axios from "axios";
 import baseUrl from "../utils/baseUrl";
 import Inptut from "./Inptut";
 import { useNavigation } from "@react-navigation/native";
+import CustomButton from "./common/CustomButton";
 
 const PaymentModal = ({ setShowPaymentModal, tripId, settleWith }) => {
   const naviagtion = useNavigation();
   const [amount, setAmount] = useState(0);
+  const [loading, setLoading] = useState(false);
   const body = {
     amount,
     settleWith: settleWith?.phoneNumber,
     paymentMode: "Cash",
   };
   const handlePay = async () => {
-    const response = await axios.post(
-      baseUrl + "/api/v1/settle/" + tripId,
-      body,
-      {
-        headers: {
-          authorization: "Bearer " + (await getToken()),
-        },
+    setLoading(true)
+    try {
+      const response = await axios.post(
+        baseUrl + "/api/v1/settle/" + tripId,
+        body,
+        {
+          headers: {
+            authorization: "Bearer " + (await getToken()),
+          },
+        }
+      );
+      if (response?.data?.message == "Settled Successfully") {
+        setShowPaymentModal(false);
+        naviagtion.navigate("Expense", { id: tripId });
       }
-    );
-    if (response?.data?.message == "Settled Successfully") {
-      setShowPaymentModal(false);
-      naviagtion.navigate("Expense", { id: tripId });
+    } catch (error) {
+      console.log(error)
+    } finally{
+      setLoading(false)
     }
   };
   return (
@@ -49,8 +58,16 @@ const PaymentModal = ({ setShowPaymentModal, tripId, settleWith }) => {
             value={amount}
             onChange={(amount) => setAmount(amount)}
             name={"amount"}
+            keyboardType={"numeric"}
           />
-          <Button title="Pay" onPress={handlePay} />
+          <CustomButton
+            title={"Pay"}
+            onPress={handlePay}
+            titleStyle={{ fontSize: 18, color: "white" }}
+            style={{ marginBottom: 30 }}
+            loading={loading}
+            disabled={loading}
+          />
         </View>
       </Overlay>
     </View>

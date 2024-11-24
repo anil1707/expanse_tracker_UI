@@ -2,11 +2,9 @@ import {
   View,
   Text,
   Image,
-  TextInput,
-  TouchableOpacity,
   SafeAreaView,
 } from "react-native";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import BackButton from "../components/BackButton";
 import Inptut from "../components/Inptut";
 import { useNavigation } from "@react-navigation/native";
@@ -18,21 +16,23 @@ import { ScrollView } from "react-native-gesture-handler";
 import baseUrl from "../utils/baseUrl";
 import CustomButton from "../components/common/CustomButton";
 import Feather from "@expo/vector-icons/Feather";
-const getToken = async () => {
-  try {
-    const token = await AsyncStorage.getItem("userToken");
-    if (token !== null) {
-      return token;
-    }
-  } catch (error) {
-    console.error("Error retrieving token:", error);
-  }
-  return null;
-};
+import getToken from "../utils/getToken";
+// const getToken = async () => {
+//   try {
+//     const token = await AsyncStorage.getItem("userToken");
+//     if (token !== null) {
+//       return token;
+//     }
+//   } catch (error) {
+//     console.error("Error retrieving token:", error);
+//   }
+//   return null;
+// };
 
 const AddTrip = () => {
   const navigation = useNavigation();
   const [errorMessage, setErrorMessage] = useState("");
+  const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     place: "",
     country: "",
@@ -44,6 +44,7 @@ const AddTrip = () => {
 
   const handleAddTrip = async () => {
     console.log("formData: ", formData);
+    setLoading(true)
     try {
       const response = await axios.post(
         baseUrl + "/api/v1/add-trip",
@@ -61,6 +62,8 @@ const AddTrip = () => {
       }
     } catch (err) {
       console.log("Failed to add new trip: ", err);
+    } finally{
+      setLoading(false);
     }
   };
 
@@ -138,7 +141,7 @@ const AddTrip = () => {
       {errorMessage && <Text style={{ color: "red" }}>{errorMessage}</Text>}
       <View style={{ flex: 1 }}>
         <View style={{ gap: 5 }}>
-          <Text style={{ fontWeight: "bold" }}>Where on earth?</Text>
+          <Text style={{ fontWeight: "bold" }}>Where on earth?<Text style={{ color: "red" }}>*</Text></Text>
           <Inptut
             placholder={"Place"}
             onChange={(value) => handleOnChange(value, "place")}
@@ -147,7 +150,7 @@ const AddTrip = () => {
           />
         </View>
         <View style={{ gap: 5 }}>
-          <Text style={{ fontWeight: "bold" }}>Which Country?</Text>
+          <Text style={{ fontWeight: "bold" }}>Which Country?<Text style={{ color: "red" }}>*</Text></Text>
           <Inptut
             placholder={"Country"}
             onChange={(value) => handleOnChange(value, "country")}
@@ -216,6 +219,8 @@ const AddTrip = () => {
           onPress={handleAddTrip}
           titleStyle={{ fontSize: 18, color: "white" }}
           style={{ marginBottom: 30 }}
+          loading={loading}
+          disabled={loading}
         />
       </View>
     </SafeAreaView>

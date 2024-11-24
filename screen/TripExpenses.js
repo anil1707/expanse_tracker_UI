@@ -198,7 +198,7 @@ const TripExpenses = (props) => {
         </Text>
       </View>
       <View style={styles.imageContainer}>
-        {!loader && (
+        {!loader && Object.keys(indivudualGroupExpanse)?.length > 0 ? (
           <View>
             {expense &&
               !loader &&
@@ -238,7 +238,7 @@ const TripExpenses = (props) => {
               showPaymentHistory={showPaymentHistory}
             />
           </View>
-        )}
+        ): <Text>No data found!</Text>}
         {loader && <ActivityIndicator size={"large"} />}
       </View>
 

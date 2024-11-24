@@ -50,6 +50,7 @@ const SettleWith = (props) => {
             <Text>Settle With</Text>
             {friends?.length > 0 &&
               friends.map((item, index) => {
+                console.log("item: ", item);
                 if (item?.name !== "You")
                   return (
                     <TouchableOpacity

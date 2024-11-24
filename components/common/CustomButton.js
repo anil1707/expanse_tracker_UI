@@ -1,15 +1,17 @@
-import { View, Text, TouchableOpacity } from "react-native";
+import { View, Text, TouchableOpacity, ActivityIndicator } from "react-native";
 import React from "react";
 
-const CustomButton = ({ title, onPress, style, titleStyle }) => {
+const CustomButton = ({ title, onPress, style, titleStyle, disabled, loading }) => {
   return (
     <TouchableOpacity
       style={{
         height: 43,
         paddingVertical:5,
         paddingHorizontal:10,
-        backgroundColor: "green",
+        backgroundColor: disabled ? "lightgreen" : "green",
+        flexDirection: "row",
         justifyContent: "center",
+        gap: 10,
         alignItems: "center",
         borderRadius: 10,
         width: "100%",
@@ -17,8 +19,10 @@ const CustomButton = ({ title, onPress, style, titleStyle }) => {
         ...style,
       }}
       onPress={onPress}
+      disabled={disabled}
     >
       <Text style={titleStyle}>{title}</Text>
+      {loading && <ActivityIndicator />}
     </TouchableOpacity>
   );
 };

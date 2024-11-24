@@ -38,12 +38,15 @@ const AddExpense = (props) => {
     trip: id,
   });
   const [activeTab, setActiveTab] = useState("equally");
+  const [errorMessage, setErrorMessage] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const handleOnChange = (value, name) => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleAddExpanse = async () => {
+    setLoading(true);
     try {
       const response = await axios.post(
         baseUrl + "/api/v1/addExpense",
@@ -56,9 +59,14 @@ const AddExpense = (props) => {
       );
       if (response.data.message === "Expense Added Successfully!") {
         navigation.navigate("Expense", { id: id });
+      } else {
+        setErrorMessage(response.data?.message);
       }
     } catch (err) {
       console.log(err);
+      setErrorMessage(err?.response?.data?.message);
+    } finally{
+      setLoading(false);
     }
   };
 
@@ -123,6 +131,7 @@ const AddExpense = (props) => {
             onChange={(value) => handleOnChange(value, "amount")}
             value={formData.amount}
             name={"amount"}
+            keyboardType="phone-pad"
           />
         </View>
 
@@ -132,7 +141,7 @@ const AddExpense = (props) => {
               flexDirection: "row",
               justifyContent: "space-between",
               paddingVertical: 10,
-              borderRadius:10
+              borderRadius: 10,
             }}
           >
             <TouchableOpacity
@@ -164,7 +173,7 @@ const AddExpense = (props) => {
           </View>
 
           {/* Friends list with checkboxes */}
-          <View style={{ width: "100%", justifyContent: "center"}}>
+          <View style={{ width: "100%", justifyContent: "center" }}>
             {selectedFriends.length &&
               selectedFriends.map((friend) => {
                 const user = frientList.find((f) => {
@@ -181,7 +190,7 @@ const AddExpense = (props) => {
                       backgroundColor: "lightblue",
                       padding: 10,
                       width: "100%",
-                      borderRadius:10 
+                      borderRadius: 10,
                     }}
                   >
                     <Text>{user?.name}</Text>
@@ -194,10 +203,15 @@ const AddExpense = (props) => {
               })}
           </View>
         </View>
+        {errorMessage && (
+          <Text style={{ color: "red", marginBottom: 10 }}>{errorMessage}</Text>
+        )}
         <CustomButton
           title={"Add Expense"}
           onPress={handleAddExpanse}
           titleStyle={{ fontSize: 18, color: "white" }}
+          disabled={formData.title === "" || formData.amount === ""}
+          loading={loading}
         />
       </View>
     </View>
