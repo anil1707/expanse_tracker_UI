@@ -1,4 +1,4 @@
-import { View, Text, ScrollView } from "react-native";
+import { View, Text, ScrollView, Image } from "react-native";
 import React, { useEffect, useState } from "react";
 import { Overlay } from "react-native-elements";
 import { AntDesign } from "@expo/vector-icons";
@@ -11,7 +11,7 @@ import formatDate from "../utils/formatDate";
 const PaymentHistory = ({ tripId, setShowPaymentHistory }) => {
   const friends = useSelector((state) => state.contactDetail);
   const profile = useSelector((state) => state.profile);
-  console.log("friends: ", friends);
+  // console.log("friends: ", friends);
   const [history, setHistory] = useState([]);
   const getHistory = async () => {
     const response = await axios.get(baseUrl + "/api/v1/history/" + tripId, {
@@ -38,24 +38,27 @@ const PaymentHistory = ({ tripId, setShowPaymentHistory }) => {
         marginTop: 10,
       }}
     >
-      <AntDesign
-        name="arrowleft"
-        size={24}
-        color="black"
-        onPress={() => setShowPaymentHistory(false)}
-      />
+      <View style={{flexDirection:"row", alignItems:"center", paddingHorizontal:20, gap: 50}}>
+        <AntDesign
+          name="arrowleft"
+          size={24}
+          color="black"
+          onPress={() => setShowPaymentHistory(false)}
+        />
+        <Text style={{fontSize:20, fontWeight:"semibold"}}>Payment History</Text>
+      </View>
 
-<ScrollView>
-      <View
-        style={{
-          width: 330,
-          paddingTop: 20,
-          backgroundColor: "white",
-          borderRadius: 10,
-          alignItems: "center",
-        }}
-      >
-          {history.length > 0 &&
+      <ScrollView>
+        <View
+          style={{
+            width: 330,
+            paddingTop: 20,
+            backgroundColor: "white",
+            borderRadius: 10,
+            alignItems: "center",
+          }}
+        >
+          {history.length > 0 ? (
             history.map((item, index) => {
               // if (item.name !== "You")
               const sendBy = friends.find((friend) => {
@@ -82,6 +85,8 @@ const PaymentHistory = ({ tripId, setShowPaymentHistory }) => {
                     borderRadius: 10,
                     marginBottom: 10,
                     elevation: 5,
+                    borderWidth: 0.5,
+                    borderColor: "green",
                   }}
                 >
                   <Text>Paid by: {sendBy?.name}</Text>
@@ -91,9 +96,28 @@ const PaymentHistory = ({ tripId, setShowPaymentHistory }) => {
                   <Text>Payment Mode: {item.paymentMode}</Text>
                 </View>
               );
-            })}
-      </View>
-        </ScrollView>
+            })
+          ) : (
+            <View
+              style={{
+                width: "100%",
+                height: "auto",
+                alignItems: "center",
+                justifyContent: "center",
+                marginTop: "20%",
+              }}
+            >
+              <Image
+                source={require("../assets/noHistory.jpg")}
+                style={{ width: "100%", height: 300 }}
+              />
+              <Text style={{ fontWeight: "bold", fontSize: 20, color: "gray" }}>
+                No Payment History
+              </Text>
+            </View>
+          )}
+        </View>
+      </ScrollView>
     </Overlay>
   );
 };

@@ -43,6 +43,9 @@ const PaymentModal = ({ setShowPaymentModal, tripId, settleWith }) => {
     <View>
       <Overlay
         onBackdropPress={() => setShowPaymentModal(false)}
+        overlayStyle={{
+          borderRadius:10
+        }}
         backdropStyle={{
           flex: 1,
           justifyContent: "center",
@@ -51,17 +54,18 @@ const PaymentModal = ({ setShowPaymentModal, tripId, settleWith }) => {
           marginTop: 10,
         }}
       >
-        <View style={{ padding: 10, gap: 10, paddingVertical: 50 }}>
-          <Text>Payment Mode: Cash</Text>
+        <View style={{ padding: 10, gap: 10}}>
+          <Text style={{ fontWeight: "bold", fontSize: 18 }}>Payment Mode: Cash</Text>
           <Text>Settle With : {settleWith?.name}</Text>
           <Inptut
             value={amount}
             onChange={(amount) => setAmount(amount)}
             name={"amount"}
             keyboardType={"numeric"}
+            placholder={"Enter amount"}
           />
           <CustomButton
-            title={"Pay"}
+            title={"Settle"}
             onPress={handlePay}
             titleStyle={{ fontSize: 18, color: "white" }}
             style={{ marginBottom: 30 }}

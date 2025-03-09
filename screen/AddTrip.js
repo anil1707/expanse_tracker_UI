@@ -3,6 +3,7 @@ import {
   Text,
   Image,
   SafeAreaView,
+  TouchableOpacity,
 } from "react-native";
 import React, { useState } from "react";
 import BackButton from "../components/BackButton";
@@ -121,7 +122,7 @@ const AddTrip = () => {
           justifyContent: "center",
         }}
       >
-        <View style={{ position: "absolute", top: 0, left: 10 }}>
+        <View style={{ position: "absolute", top: 10, left: 0 }}>
           <BackButton onPress={() => navigation.navigate("Home")} />
         </View>
         <Text style={{ fontSize: 20, fontWeight: "semibold" }}>Add Trip</Text>
@@ -130,18 +131,19 @@ const AddTrip = () => {
         style={{
           justifyContent: "center",
           alignItems: "center",
-          marginVertical: 40,
+          marginVertical: 20,
+          height: "20%"
         }}
       >
         <Image
-          source={require("../assets/img7.jpeg")}
-          style={{ width: 200, height: 200 }}
+          source={require("../assets/image2.jpg")}
+          style={{ width: "100%", height: "100%", borderRadius:10}}
         />
       </View>
       {errorMessage && <Text style={{ color: "red" }}>{errorMessage}</Text>}
-      <View style={{ flex: 1 }}>
-        <View style={{ gap: 5 }}>
-          <Text style={{ fontWeight: "bold" }}>Where on earth?<Text style={{ color: "red" }}>*</Text></Text>
+      <ScrollView style={{ flex: 1}}>
+        <View style={{ gap: 5, marginBottom: 15 }}>
+          <Text style={{ fontWeight: "bold", color:"gray" }}>Place <Text style={{ color: "red" }}>*</Text></Text>
           <Inptut
             placholder={"Place"}
             onChange={(value) => handleOnChange(value, "place")}
@@ -150,7 +152,7 @@ const AddTrip = () => {
           />
         </View>
         <View style={{ gap: 5 }}>
-          <Text style={{ fontWeight: "bold" }}>Which Country?<Text style={{ color: "red" }}>*</Text></Text>
+          <Text style={{ fontWeight: "bold", color:"gray" }}>Country <Text style={{ color: "red" }}>*</Text></Text>
           <Inptut
             placholder={"Country"}
             onChange={(value) => handleOnChange(value, "country")}
@@ -158,30 +160,32 @@ const AddTrip = () => {
             name={"country"}
           />
         </View>
-        <View
+        <TouchableOpacity
           style={{
             gap: 5,
             flexDirection: "row",
             alignItems: "center",
             justifyContent: "space-between",
             marginTop: 10,
+            backgroundColor: "white",
+            paddingHorizontal: 15,
+            paddingVertical:5,
+            borderRadius: 8,
+            borderWidth:1, 
+            borderColor:"green"
           }}
+          onPress={handleAddFriends}
         >
-          <Text style={{ fontSize: 18, fontWeight: "semibold" }}>
+          <Text style={{ color:"green" }}>
             Add Friend
           </Text>
-          <View
-            style={{ backgroundColor: "green", padding: 7, borderRadius: 50 }}
-          >
             <Feather
               name="plus"
-              size={24}
-              color="white"
-              onPress={handleAddFriends}
+              size={25}
+              color="green"
             />
-          </View>
-        </View>
-        <ScrollView style={{ marginTop: 20 }}>
+        </TouchableOpacity>
+        <View style={{ marginTop: 10, paddingVertical:5 }}>
           {formData?.friends?.length != 0 &&
             formData?.friends.map((friend, index) => {
               return (
@@ -189,6 +193,7 @@ const AddTrip = () => {
                   style={{
                     backgroundColor: "lightgray",
                     padding: 10,
+                    paddingVertical:6,
                     borderRadius: 8,
                     width: "100%",
                     flexDirection: "row",
@@ -204,25 +209,27 @@ const AddTrip = () => {
                       backgroundColor: "white",
                       borderRadius: 50,
                       padding: 2,
+                      borderWidth:.5,
+                      borderColor:"green"
                     }}
                     name="delete-outline"
                     size={24}
-                    color="black"
+                    color="green"
                     onPress={() => handleRemoveFriend(index, friend.name)}
                   />
                 </View>
               );
             })}
-        </ScrollView>
+        </View>
         <CustomButton
           title={"Add Trip"}
           onPress={handleAddTrip}
           titleStyle={{ fontSize: 18, color: "white" }}
-          style={{ marginBottom: 30 }}
+          style={{ marginBottom: 30, marginTop: 10 }}
           loading={loading}
           disabled={loading}
         />
-      </View>
+      </ScrollView>
     </SafeAreaView>
   );
 };

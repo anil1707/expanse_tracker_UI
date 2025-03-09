@@ -11,13 +11,13 @@ const Welcome = () => {
     <SafeAreaView style={{ paddingTop: 50, paddingHorizontal: 24 }}>
       <View style={{ alignItems: "center" }}>
         <Image
-          source={require("../assets/welcome.png")}
-          style={{ margin: 40 }}
+          source={require("../assets/logo2.png")}
+          style={{  width: "60%", height: "38%", borderRadius:0, objectFit:"contain" }}
         />
-        <Text style={{ fontWeight: "bold", fontSize: 30, margin: 40 }}>
-          Expensify
+        <Text style={{ fontWeight: "bold", fontSize: 30, margin: 10 }}>
+          Manage Trip
         </Text>
-        <View style={{ gap: 40, marginTop: 80, width: "100%" }}>
+        <View style={{ gap: 40, marginTop: "70%", width: "100%" }}>
           <CustomButton
             title={"Sign In"}
             onPress={() => navigation.navigate("Signin")}

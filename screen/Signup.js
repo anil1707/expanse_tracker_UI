@@ -64,7 +64,7 @@ const Signup = () => {
         contentContainerStyle={{ flexGrow: 1 }}
         keyboardShouldPersistTaps="handled"
       >
-        <View style={{ flex: 1, paddingHorizontal: 24, paddingVertical: 20 }}>
+        <View style={{ flex: 1, paddingHorizontal: 24, paddingVertical: 20}}>
           <View
             style={{
               flexDirection: "row",
@@ -72,7 +72,7 @@ const Signup = () => {
               justifyContent: "center",
             }}
           >
-            <View style={{ position: "absolute", top: 0, left: 10 }}>
+            <View style={{ position: "absolute", top: 10, left: 0 }}>
               <BackButton onPress={() => navigation.navigate("Welcome")} />
             </View>
             <Text style={{ fontSize: 20, fontWeight: "semibold" }}>
@@ -83,12 +83,14 @@ const Signup = () => {
             style={{
               justifyContent: "center",
               alignItems: "center",
-              marginVertical: 40,
+              height: "37%",
+              width: "100%",
+              marginVertical:20,
             }}
           >
             <Image
-              source={require("../assets/signup.png")}
-              style={{ width: 200, height: 200 }}
+              source={require("../assets/signup2.png")}
+              style={{ width: "85%", height: "100%"}}
             />
           </View>
           {errorMessage && (

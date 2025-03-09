@@ -6,6 +6,8 @@ import {
   StyleSheet,
   ActivityIndicator,
   Button,
+  Image,
+  ScrollView,
 } from "react-native";
 import React, { useCallback, useEffect, useState } from "react";
 import EmptyComponent from "../components/EmptyComponent";
@@ -185,7 +187,7 @@ const TripExpenses = (props) => {
           justifyContent: "center",
         }}
       >
-        <View style={{ position: "absolute", top: 0, left: 10 }}>
+        <View style={{ position: "absolute", top: 10, left: 0 }}>
           <BackButton
             onPress={() => {
               navigation.navigate("Home");
@@ -199,46 +201,54 @@ const TripExpenses = (props) => {
       </View>
       <View style={styles.imageContainer}>
         {!loader && Object.keys(indivudualGroupExpanse)?.length > 0 ? (
-          <View>
-            {expense &&
-              !loader &&
-              Object.keys(indivudualGroupExpanse) &&
-              Object.keys(indivudualGroupExpanse).map((friend, index) => {
-                const user = friends?.find(
-                  (user) => user?.phoneNumber == friend
-                );
-                return (
-                  <Text
-                    key={index}
-                    style={{
-                      color:
-                        indivudualGroupExpanse[
-                          Object.keys(indivudualGroupExpanse)[index]
-                        ] < 0
-                          ? "red"
-                          : "green",
-                    }}
-                  >
-                    {user?.name} :{" "}
-                    {indivudualGroupExpanse[
-                      Object.keys(indivudualGroupExpanse)[index]
-                    ] < 0
-                      ? indivudualGroupExpanse[
-                          Object.keys(indivudualGroupExpanse)[index]
-                        ] * -1
-                      : indivudualGroupExpanse[
-                          Object.keys(indivudualGroupExpanse)[index]
-                        ]}
-                  </Text>
-                );
-              })}
-            <Settle
-              tripId={id}
-              setShowPaymentHistory={setShowPaymentHistory}
-              showPaymentHistory={showPaymentHistory}
-            />
+          <View style={{padding:10}}>
+            <ScrollView showsVerticalScrollIndicator={false}>
+              {expense &&
+                !loader &&
+                Object.keys(indivudualGroupExpanse) &&
+                Object.keys(indivudualGroupExpanse).map((friend, index) => {
+                  const user = friends?.find(
+                    (user) => user?.phoneNumber == friend
+                  );
+                  return (
+                    <Text
+                      key={index}
+                      style={{
+                        color:
+                          indivudualGroupExpanse[
+                            Object.keys(indivudualGroupExpanse)[index]
+                          ] < 0
+                            ? "red"
+                            : "green",
+                      }}
+                    >
+                      {user?.name} :{" "}
+                      {indivudualGroupExpanse[
+                        Object.keys(indivudualGroupExpanse)[index]
+                      ] < 0
+                        ? indivudualGroupExpanse[
+                            Object.keys(indivudualGroupExpanse)[index]
+                          ] * -1
+                        : indivudualGroupExpanse[
+                            Object.keys(indivudualGroupExpanse)[index]
+                          ]}
+                    </Text>
+                  );
+                })}
+              
+            </ScrollView>
+              <Settle
+                tripId={id}
+                setShowPaymentHistory={setShowPaymentHistory}
+                showPaymentHistory={showPaymentHistory}
+              />
           </View>
-        ): <Text>No data found!</Text>}
+        ) : (
+          <Image
+            source={require("../assets/noRecordFound.gif")}
+            style={{ width: "90%", height: "90%", resizeMode: "contain" }}
+          />
+        )}
         {loader && <ActivityIndicator size={"large"} />}
       </View>
 
@@ -246,7 +256,7 @@ const TripExpenses = (props) => {
         <View>
           <Text style={styles.recentTripsText}>Expenses</Text>
           <TouchableOpacity onPress={handleSeeFriend}>
-            <Text style={{ textDecorationLine: "underline", color: "blue" }}>
+            <Text style={{ textDecorationLine: "underline", color: "green" }}>
               Friends
             </Text>
           </TouchableOpacity>
@@ -397,6 +407,7 @@ const styles = StyleSheet.create({
     borderWidth: 0.5,
     borderRadius: 10,
     elevation: 3,
+    borderColor: "green",
   },
   image: {},
   recentTripsContainer: {
@@ -411,16 +422,17 @@ const styles = StyleSheet.create({
     fontSize: 20,
   },
   addTripButton: {
-    borderWidth: 1.5,
+    borderWidth: 1,
     paddingHorizontal: 10,
     paddingVertical: 5,
     borderRadius: 20,
     backgroundColor: "white",
     elevation: 5,
+    borderColor:"green"
   },
   addTripText: {
-    fontWeight: "bold",
     fontSize: 15,
+    color:"green"
   },
   listContainer: {
     height: 430,

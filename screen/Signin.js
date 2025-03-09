@@ -87,7 +87,7 @@ const Signin = () => {
               marginTop: 10,
             }}
           >
-            <View style={{ position: "absolute", top: 0, left: 10 }}>
+            <View style={{ position: "absolute", top: 10, left: 0 }}>
               <BackButton onPress={() => navigation.navigate("Welcome")} />
             </View>
             <Text style={{ fontSize: 20, fontWeight: "semibold" }}>
@@ -98,12 +98,12 @@ const Signin = () => {
             style={{
               justifyContent: "center",
               alignItems: "center",
-              marginVertical: 40,
+              // marginVertical: 40,
             }}
           >
             <Image
-              source={require("../assets/login.png")}
-              style={{ width: 200, height: 200 }}
+              source={require("../assets/login4.webp")}
+              style={{ width: "100%", height: "50%"}}
             />
           </View>
           {errorMessage && <Text style={{ color: "red", marginBottom:10 }}>{errorMessage}</Text>}

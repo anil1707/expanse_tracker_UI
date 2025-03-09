@@ -76,17 +76,17 @@ const Home = () => {
           width: 150,
           height: 150,
           backgroundColor: "white",
-          justifyContent: "center",
-          alignItems: "center",
-          borderRadius: 15,
+          borderWidth: .3,
+          borderColor: "green",
+          borderRadius: 10,
         }}
         onPress={() => navigation.navigate("Expense", { id: item._id })}
       >
-        <View>
-          <Image source={randomImage()} style={{ width: 80, height: 80 }} />
-        </View>
-        <View>
-          <Text style={{ fontWeight: "bold", fontSize: 20 }}>{item.place}</Text>
+        {/* <View > */}
+          <Image source={randomImage()} style={{ width: "100%", height: "60%", borderTopLeftRadius: 9, borderTopRightRadius: 10 }} />
+        {/* </View> */}
+        <View style={{marginLeft:10, }}>
+          <Text style={{ fontWeight: "bold", fontSize: 17 }}>{item.place}</Text>
           <Text>{item.country}</Text>
         </View>
       </TouchableOpacity>
@@ -113,7 +113,7 @@ const Home = () => {
   return (
     <View style={[styles.container, { position: "relative" }]}>
       <View style={styles.header}>
-        <Text style={styles.headerText}>Expensify</Text>
+        <Text style={styles.headerText}>Manage Trip</Text>
         <TouchableOpacity
           style={[
             styles.logoutButton,
@@ -121,7 +121,8 @@ const Home = () => {
               flexDirection: "row",
               justifyContent: "center",
               alignItems: "center",
-              borderWidth: 1.5,
+              borderWidth: 1,
+              borderColor: "green",
               paddingHorizontal: 10,
               paddingVertical: 5,
               borderRadius: 20,
@@ -132,15 +133,15 @@ const Home = () => {
           ]}
           onPress={() => setClickProfile(!clickProfile)}
         >
-          <FontAwesome name="user-circle" size={20} color="gray" />
-          <Text>{userData?.name}</Text>
+          <FontAwesome name="user-circle" size={20} color="green" />
+          <Text style={{ color: "green" }}>{userData?.name}</Text>
           {/* <Text style={styles.logoutText} onPress={handleLogout}>
             Logout
           </Text> */}
         </TouchableOpacity>
       </View>
       <View style={styles.imageContainer}>
-        <Image source={require("../assets/img3.png")} style={styles.image} />
+        <Image source={require("../assets/expense.jpg")} style={styles.image} />
       </View>
       <View style={styles.recentTripsContainer}>
         <Text style={styles.recentTripsText}>Recent trips</Text>
@@ -152,9 +153,6 @@ const Home = () => {
         >
           <Text style={styles.addTripText}>Add Trip</Text>
         </TouchableOpacity>
-        {/* <TouchableOpacity onPress={() => showToast("toast message")}>
-          <Text>show Toast</Text>
-        </TouchableOpacity> */}
       </View>
       <View style={styles.listContainer}>
         {loader && <ActivityIndicator size="large" />}
@@ -208,12 +206,12 @@ const ProfileModal = ({ clickProfile, setClickProfile, handleLogout }) => {
         alignItems: "center",
       }}
     >
-      <TouchableOpacity>
+      {/* <TouchableOpacity>
         <Text>Profile</Text>
       </TouchableOpacity>
-      <Divider style={{ width: "100%", height: 1, marginVertical: 5 }} />
+      <Divider style={{ width: "100%", height: 1, marginVertical: 5 }} /> */}
       <TouchableOpacity onPress={handleLogout}>
-        <Text>Logout</Text>
+        <Text style={{ color: "green"}}>Logout</Text>
       </TouchableOpacity>
     </Overlay>
   );
@@ -233,6 +231,7 @@ const styles = StyleSheet.create({
   headerText: {
     fontWeight: "bold",
     fontSize: 30,
+    color:"green"
   },
   logoutButton: {},
   logoutText: {
@@ -243,10 +242,12 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     marginVertical: 20,
+    height: "25%"
   },
   image: {
-    width: 300,
-    height: 200,
+    width: "100%",
+    height: "100%",
+    borderRadius:10
   },
   recentTripsContainer: {
     flexDirection: "row",
@@ -260,19 +261,20 @@ const styles = StyleSheet.create({
     fontSize: 20,
   },
   addTripButton: {
-    borderWidth: 1.5,
-    paddingHorizontal: 10,
+    borderWidth: 1,
+    paddingHorizontal: 15,
     paddingVertical: 5,
     borderRadius: 20,
     backgroundColor: "white",
     elevation: 1,
+    borderColor: "green",
   },
   addTripText: {
-    fontWeight: "bold",
-    fontSize: 15,
+    color:"green"
   },
   listContainer: {
-    height: 430,
+    height: 420,
+    marginBottom: 20,
   },
   columnWrapper: {
     justifyContent: "space-between",

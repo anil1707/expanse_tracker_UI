@@ -20,7 +20,7 @@ const SettleWith = (props) => {
     <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
       <Overlay
         animationType="slide"
-        overlayStyle={{ height: "100%" }}
+        overlayStyle={{ height: "100%", backgroundColor: "#efefef" }}
         backdropStyle={{
           flex: 1,
           justifyContent: "center",
@@ -31,23 +31,25 @@ const SettleWith = (props) => {
         onBackdropPress={() => naviagtion.navigate("Expense", { id: tripId })}
       >
         <View style={{ marginTop: 10, marginLeft: 10, marginBottom: 20 }}>
-          <AntDesign
-            name="arrowleft"
-            size={24}
-            color="black"
-            onPress={() => naviagtion.navigate("Expense", { id: tripId })}
-          />
+          <View style={{ flexDirection: "row", alignItems: "center", gap: 70 }}>
+            <AntDesign
+              name="arrowleft"
+              size={24}
+              color="black"
+              onPress={() => naviagtion.navigate("Expense", { id: tripId })}
+            />
+            <Text style={{ fontSize: 18, fontWeight: "semibold" }}>Settle With</Text>
+          </View>
           <View
             style={{
               width: 330,
               paddingTop: 20,
-              backgroundColor: "white",
+              // backgroundColor: "white",
               borderRadius: 10,
               alignItems: "center",
               height: 400,
             }}
           >
-            <Text>Settle With</Text>
             {friends?.length > 0 &&
               friends.map((item, index) => {
                 console.log("item: ", item);
@@ -55,16 +57,22 @@ const SettleWith = (props) => {
                   return (
                     <TouchableOpacity
                       key={index}
-                      style={{ width: 300 }}
+                      style={{
+                        width: 300,
+                        borderWidth: 0.3,
+                        borderColor: "green",
+                        borderRadius: 10,
+                        backgroundColor: "white",
+                        marginBottom: 10,
+                      }}
                       onPress={() => handleSettleWith(item)}
                     >
                       <Text
                         style={{
-                          backgroundColor: "lightgray",
                           padding: 10,
                           width: "100%",
                           borderRadius: 10,
-                          marginBottom: 10,
+                          color: "green",
                         }}
                       >
                         {item?.name}

@@ -16,13 +16,15 @@ const CustomButton = ({ title, onPress, style, titleStyle, disabled, loading }) 
         borderRadius: 10,
         width: "100%",
         elevation:5,
+        borderWidth:.3,
+        borderColor:"green",
         ...style,
       }}
       onPress={onPress}
       disabled={disabled}
     >
       <Text style={titleStyle}>{title}</Text>
-      {loading && <ActivityIndicator />}
+      {loading && <ActivityIndicator color={"white"} />}
     </TouchableOpacity>
   );
 };

@@ -9,7 +9,7 @@ const SeeFriend = ({ seeFriends, setSeeFriends, friends }) => {
   return (
     <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
       <Modal
-        animationType="slide"
+        animationType="fade"
         visible={seeFriends}
         onRequestClose={() => setSeeFriends(false)}
         style={{
@@ -18,15 +18,19 @@ const SeeFriend = ({ seeFriends, setSeeFriends, friends }) => {
           alignItems: "center",
           backgroundColor: "rgba(0, 0, 0, 0.5)",
           marginTop: 10,
+          backgroundColor:"red"
         }}
       >
         <View style={{ marginTop: 10, marginLeft: 10, marginBottom: 20 }}>
+          <View style={{ flexDirection: "row", alignItems: "center", gap: 70 }}>
           <AntDesign
             name="arrowleft"
             size={24}
             color="black"
             onPress={() => setSeeFriends(false)}
           />
+          <Text style={{ fontSize: 18, fontWeight: "semibold" }}>All Friends</Text>
+          </View>
           <View
             style={{
               width: 330,
@@ -34,7 +38,7 @@ const SeeFriend = ({ seeFriends, setSeeFriends, friends }) => {
               backgroundColor: "white",
               borderRadius: 10,
               alignItems: "center",
-              height: 400,
+              height: "100%",
             }}
           >
             {friends.length &&
@@ -48,6 +52,9 @@ const SeeFriend = ({ seeFriends, setSeeFriends, friends }) => {
                       width: "100%",
                       borderRadius: 10,
                       marginBottom: 10,
+                      borderWidth:1,
+                      borderColor:"green",
+                      color: "green"
                     }}
                   >
                     {item?.name}

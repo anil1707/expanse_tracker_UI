@@ -15,29 +15,31 @@ const Settle = ({ tripId, setShowPaymentHistory, showPaymentHistory }) => {
         onPress={handleSettle}
         style={{
           paddingVertical: 5,
-          paddingHorizontal: 10,
-          backgroundColor: "white",
+          paddingHorizontal: 15,
+          backgroundColor: "green",
           alignItems: "center",
           borderRadius: 20,
           elevation: 5,
-          borderWidth: 1.5,
+          borderWidth: 1,
+          borderColor: "green",
         }}
       >
-        <Text style={{ fontWeight: "bold", fontSize: 15 }}>Settle</Text>
+        <Text style={{ fontWeight: "bold", fontSize: 15, color:"white"  }}>Settle</Text>
       </TouchableOpacity>
       <TouchableOpacity
         onPress={handleHistory}
         style={{
           paddingVertical: 5,
-          paddingHorizontal: 10,
+          paddingHorizontal: 15,
           backgroundColor: "white",
           alignItems: "center",
           borderRadius: 20,
           elevation: 5,
-          borderWidth: 1.5,
+          borderWidth: 1,
+          borderColor: "green",
         }}
       >
-        <Text style={{ fontWeight: "bold", fontSize: 15 }}>
+        <Text style={{  fontSize: 15, color: "green" }}>
           Payment History
         </Text>
       </TouchableOpacity>
